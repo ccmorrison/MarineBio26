@@ -1,0 +1,71 @@
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ wget  -O "silva-138-99-nb-classifier.qza" "https://data.qiime2.org/classifiers/sklearn-1.4.2/silva/silva-138-99-nb-classifier.qza"
+--2026-02-21 20:00:13--  https://data.qiime2.org/classifiers/sklearn-1.4.2/silva/silva-138-99-nb-classifier.qza
+Resolving data.qiime2.org (data.qiime2.org)... 54.200.1.12
+Connecting to data.qiime2.org (data.qiime2.org)|54.200.1.12|:443... connected.
+HTTP request sent, awaiting response... 302 FOUND
+Location: https://s3-us-west-2.amazonaws.com/qiime2-data/classifiers/sklearn-1.4.2/silva/silva-138-99-nb-classifier.qza [following]
+--2026-02-21 20:00:13--  https://s3-us-west-2.amazonaws.com/qiime2-data/classifiers/sklearn-1.4.2/silva/silva-138-99-nb-classifier.qza
+Resolving s3-us-west-2.amazonaws.com (s3-us-west-2.amazonaws.com)... 52.92.139.72, 52.218.220.32, 3.5.78.55, ...
+Connecting to s3-us-west-2.amazonaws.com (s3-us-west-2.amazonaws.com)|52.92.139.72|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 218245868 (208M) [binary/octet-stream]
+Saving to: ‘silva-138-99-nb-classifier.qza’
+
+silva-138-99-nb-classi 100%[=========================>] 208.13M  29.2MB/s    in 7.7s    
+
+2026-02-21 20:00:21 (27.1 MB/s) - ‘silva-138-99-nb-classifier.qza’ saved [218245868/218245868]
+
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime feature-classifier classify-sklearn  \
+    --i-classifier silva-138-99-nb-classifier.qza   \
+    --i-reads rep-seqs.qza   \
+    --o-classification taxonomy.qza 
+    --p-n-jobs 16 #---> number of cores 
+Saved FeatureData[Taxonomy] to: taxonomy.qza
+-bash: --p-n-jobs: command not found
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+denoising-stats.qza   paired-end-demux.qzv  rep-seqs.qzv                    table.qza
+denoising-stats.qzv   pe-33manifest.txt     sample-metadata.tsv             table.qzv
+paired-end-demux.qza  rep-seqs.qza          silva-138-99-nb-classifier.qza  taxonomy.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime metadata tabulate  --m-input-file taxonomy.qza --o-visualization taxonomy.qzv
+Saved Visualization to: taxonomy.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime taxa barplot \
+    --i-table table.qza \
+    --i-taxonomy taxonomy.qza \
+    --m-metadata-file sample-metadata.tsv \
+    --o-visualization taxa-bar-plots.qzv
+
+Saved Visualization to: taxa-bar-plots.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime tools export   \
+    --input-path table.qza  \
+    --output-path ASV-table
+Exported table.qza as BIOMV210DirFmt to directory ASV-table
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ biom convert \
+    -i ASV-table/feature-table.biom \
+    -o ASV-table/feature-table.tsv \
+    --to-tsv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime taxa filter-table   \
+    --i-table table.qza   \
+    --i-taxonomy taxonomy.qza   \
+    --p-exclude mitochondria,chloroplast   \
+    --o-filtered-table table-no-mitochondria-no-chloroplast.qza
+Saved FeatureTable[Frequency] to: table-no-mitochondria-no-chloroplast.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime feature-table summarize   \
+    --i-table table-no-mitochondria-no-chloroplast.qza   \
+    --o-visualization table-no-mitochondria-no-chloroplast.qzv   \
+    --m-sample-metadata-file sample-metadata.tsv
+Saved Visualization to: table-no-mitochondria-no-chloroplast.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime feature-table summarize   \
+    --i-table table-no-mitochondria-no-chloroplast.qza   \
+    --o-visualization table-no-mitochondria-no-chloroplast.qzv   \
+    --m-sample-metadata-file sample-metadata.tsv
+Saved Visualization to: table-no-mitochondria-no-chloroplast.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime taxa barplot   \
+ --i-table table-no-mitochondria-no-chloroplast.qza  \
+ --i-taxonomy taxonomy.qza   \
+ --m-metadata-file sample-metadata.tsv  \
+ --o-visualization taxa-bar-plots-no-mitochondria-no-chloroplast.qzv
+Saved Visualization to: taxa-bar-plots-no-mitochondria-no-chloroplast.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime tools export   --input-path table-no-mitochondria-no-chloroplast.qza  --output-path ASV-table-no-mitochondria-no-chloroplast
+Exported table-no-mitochondria-no-chloroplast.qza as BIOMV210DirFmt to directory ASV-table-no-mitochondria-no-chloroplast
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ biom convert -i ASV-table-no-mitochondria-no-chloroplast/feature-table.biom -o ASV-table-no-mitochondria-no-chloroplast/feature-table.tsv --to-tsv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ 
