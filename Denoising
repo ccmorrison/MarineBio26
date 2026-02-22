@@ -1,0 +1,910 @@
+Last login: Fri Feb 20 10:50:01 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+(base) Caitlins-MacBook-Pro-9:~ ccmorrison$ ssh ccm6056@oedipus.bioinformatics.rit.edu
+RIT information technology resources are for the use of the RIT community only.
+By using RIT information technology resources you acknowledge that you have read
+and comply with RIT's Code of Conduct for Computer and Network Use and RIT's
+Information Security Policy and Standards. Use of RIT information technology
+resources may be monitored and unauthorized use is strictly prohibited.
+ccm6056@oedipus.bioinformatics.rit.edu's password: 
+Linux oedipus 6.12.69+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.69-1 (2026-02-08) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Fri Feb 20 10:50:52 2026 from 10.118.24.176
+ccm6056@oedipus:~$ conda activate qiime2-amplicon-2024.10
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~$ ls
+saltmarsh  turtle
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~$ cd turtle
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ ls
+data  rawdata
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ cd data
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired \
+   --i-demultiplexed-seqs paired-end-demux.qza \
+   --p-trim-left-f 12 \
+   --p-trim-left-r 12\
+   --p-trunc-len-f 240 \
+   --p-trunc-len-r 240 \
+   --o-table table.qza \
+   --p-n-threads 16 \ # ----> this is the number of cores we will use we might need to modify that
+   --o-representative-sequences rep-seqs.qza \
+   --o-denoising-stats denoising-stats.qza \
+   --verbose\
+Usage: qiime dada2 denoise-paired [OPTIONS]
+
+  This method denoises paired-end sequences, dereplicates them, and filters
+  chimeras.
+
+Inputs:
+  --i-demultiplexed-seqs ARTIFACT SampleData[PairedEndSequencesWithQuality]
+                          The paired-end demultiplexed sequences to be
+                          denoised.                                 [required]
+Parameters:
+  --p-trunc-len-f INTEGER Position at which forward read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trunc-len-r INTEGER Position at which reverse read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trim-left-f INTEGER Position at which forward read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-trim-left-r INTEGER Position at which reverse read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-max-ee-f NUMBER     Forward reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-max-ee-r NUMBER     Reverse reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-trunc-q INTEGER     Reads are truncated at the first instance of a
+                          quality score less than or equal to this value. If
+                          the resulting read is then shorter than
+                          `trunc-len-f` or `trunc-len-r` (depending on the
+                          direction of the read) it is discarded. [default: 2]
+  --p-min-overlap INTEGER The minimum length of the overlap required for
+    Range(4, None)        merging the forward and reverse reads. [default: 12]
+  --p-pooling-method TEXT Choices('independent', 'pseudo')
+                          The method used to pool samples for denoising.
+                          "independent": Samples are denoised indpendently.
+                          "pseudo": The pseudo-pooling method is used to
+                          approximate pooling of samples. In short, samples
+                          are denoised independently once, ASVs detected in at
+                          least 2 samples are recorded, and samples are
+                          denoised independently a second time, but this time
+                          with prior knowledge of the recorded ASVs and thus
+                          higher sensitivity to those ASVs.
+                                                      [default: 'independent']
+  --p-chimera-method TEXT Choices('consensus', 'none', 'pooled')
+                          The method used to remove chimeras. "none": No
+                          chimera removal is performed. "pooled": All reads
+                          are pooled prior to chimera detection. "consensus":
+                          Chimeras are detected in samples individually, and
+                          sequences found chimeric in a sufficient fraction of
+                          samples are removed.          [default: 'consensus']
+  --p-min-fold-parent-over-abundance NUMBER
+                          The minimum abundance of potential parents of a
+                          sequence being tested as chimeric, expressed as a
+                          fold-change versus the abundance of the sequence
+                          being tested. Values should be greater than or equal
+                          to 1 (i.e. parents should be more abundant than the
+                          sequence being tested). This parameter has no effect
+                          if chimera-method is "none".          [default: 1.0]
+  --p-allow-one-off / --p-no-allow-one-off
+                          Bimeras that are one-off from exact are also
+                          identified if the `allow-one-off` argument is TrueIf
+                          True, a sequence will be identified as bimera if it
+                          is one mismatch or indel away from an exact bimera.
+                                                              [default: False]
+  --p-n-threads NTHREADS  The number of threads to use for multithreaded
+                          processing. If 0 is provided, all available cores
+                          will be used.                           [default: 1]
+  --p-n-reads-learn INTEGER
+                          The number of reads to use when training the error
+                          model. Smaller numbers will result in a shorter run
+                          time but a less reliable error model.
+                                                            [default: 1000000]
+  --p-hashed-feature-ids / --p-no-hashed-feature-ids
+                          If true, the feature ids in the resulting table
+                          will be presented as hashes of the sequences
+                          defining each feature. The hash will always be the
+                          same for the same sequence so this allows feature
+                          tables to be merged across runs of this method. You
+                          should only merge tables if the exact same
+                          parameters are used for each run.    [default: True]
+  --p-retain-all-samples / --p-no-retain-all-samples
+                          If True all samples input to dada2 will be retained
+                          in the output of dada2, if false samples with zero
+                          total frequency are removed from the table.
+                                                               [default: True]
+Outputs:
+  --o-table ARTIFACT FeatureTable[Frequency]
+                          The resulting feature table.              [required]
+  --o-representative-sequences ARTIFACT FeatureData[Sequence]
+                          The resulting feature sequences. Each feature in
+                          the feature table will be represented by exactly one
+                          sequence, and these sequences will be the joined
+                          paired-end sequences.                     [required]
+  --o-denoising-stats ARTIFACT SampleData[DADA2Stats]
+                                                                    [required]
+Miscellaneous:
+  --output-dir PATH       Output unspecified results to a directory
+  --verbose / --quiet     Display verbose output to stdout and/or stderr
+                          during execution of this action. Or silence output
+                          if execution is successful (silence is golden).
+  --example-data PATH     Write example data and exit.
+  --citations             Show citations and exit.
+  --use-cache DIRECTORY   Specify the cache to be used for the intermediate
+                          work of this action. If not provided, the default
+                          cache under $TMP/qiime2/<uname> will be used.
+                          IMPORTANT FOR HPC USERS: If you are on an HPC system
+                          and are using parallel execution it is important to
+                          set this to a location that is globally accessible
+                          to all nodes in the cluster.
+  --help                  Show this message and exit.
+
+Examples:
+  # ### example: denoise paired
+  qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs demux-paired.qza \
+    --p-trunc-len-f 150 \
+    --p-trunc-len-r 140 \
+    --o-representative-sequences representative-sequences.qza \
+    --o-table table.qza \
+    --o-denoising-stats denoising-stats.qza
+  
+
+                    There was a problem with the command:                     
+ (1/1?) No such option: ----
+-bash: --o-representative-sequences: command not found
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ conda activate bioinfo_env 
+(bioinfo_env) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired    --i-demultiplexed-seqs paired-end-demux.qza    --p-trim-left-f 12    --p-trim-left-r 12   --p-trunc-len-f 240    --p-trunc-len-r 240    --o-table table.qza    --p-n-threads 16 \ # ----> this is the number of cores we will use we might need to modify that
+-bash: qiime: command not found
+(bioinfo_env) ccm6056@oedipus:~/turtle/data$ conda activate qiime2-amplicon-2024.10
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired    --i-demultiplexed-seqs paired-end-demux.qza    --p-trim-left-f 12    --p-trim-left-r 12   --p-trunc-len-f 240    --p-trunc-len-r 240    --o-table table.qza    --p-n-threads 16 \ # ----> this is the number of cores we will use we might need to modify that
+Usage: qiime dada2 denoise-paired [OPTIONS]
+
+  This method denoises paired-end sequences, dereplicates them, and filters
+  chimeras.
+
+Inputs:
+  --i-demultiplexed-seqs ARTIFACT SampleData[PairedEndSequencesWithQuality]
+                          The paired-end demultiplexed sequences to be
+                          denoised.                                 [required]
+Parameters:
+  --p-trunc-len-f INTEGER Position at which forward read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trunc-len-r INTEGER Position at which reverse read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trim-left-f INTEGER Position at which forward read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-trim-left-r INTEGER Position at which reverse read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-max-ee-f NUMBER     Forward reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-max-ee-r NUMBER     Reverse reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-trunc-q INTEGER     Reads are truncated at the first instance of a
+                          quality score less than or equal to this value. If
+                          the resulting read is then shorter than
+                          `trunc-len-f` or `trunc-len-r` (depending on the
+                          direction of the read) it is discarded. [default: 2]
+  --p-min-overlap INTEGER The minimum length of the overlap required for
+    Range(4, None)        merging the forward and reverse reads. [default: 12]
+  --p-pooling-method TEXT Choices('independent', 'pseudo')
+                          The method used to pool samples for denoising.
+                          "independent": Samples are denoised indpendently.
+                          "pseudo": The pseudo-pooling method is used to
+                          approximate pooling of samples. In short, samples
+                          are denoised independently once, ASVs detected in at
+                          least 2 samples are recorded, and samples are
+                          denoised independently a second time, but this time
+                          with prior knowledge of the recorded ASVs and thus
+                          higher sensitivity to those ASVs.
+                                                      [default: 'independent']
+  --p-chimera-method TEXT Choices('consensus', 'none', 'pooled')
+                          The method used to remove chimeras. "none": No
+                          chimera removal is performed. "pooled": All reads
+                          are pooled prior to chimera detection. "consensus":
+                          Chimeras are detected in samples individually, and
+                          sequences found chimeric in a sufficient fraction of
+                          samples are removed.          [default: 'consensus']
+  --p-min-fold-parent-over-abundance NUMBER
+                          The minimum abundance of potential parents of a
+                          sequence being tested as chimeric, expressed as a
+                          fold-change versus the abundance of the sequence
+                          being tested. Values should be greater than or equal
+                          to 1 (i.e. parents should be more abundant than the
+                          sequence being tested). This parameter has no effect
+                          if chimera-method is "none".          [default: 1.0]
+  --p-allow-one-off / --p-no-allow-one-off
+                          Bimeras that are one-off from exact are also
+                          identified if the `allow-one-off` argument is TrueIf
+                          True, a sequence will be identified as bimera if it
+                          is one mismatch or indel away from an exact bimera.
+                                                              [default: False]
+  --p-n-threads NTHREADS  The number of threads to use for multithreaded
+                          processing. If 0 is provided, all available cores
+                          will be used.                           [default: 1]
+  --p-n-reads-learn INTEGER
+                          The number of reads to use when training the error
+                          model. Smaller numbers will result in a shorter run
+                          time but a less reliable error model.
+                                                            [default: 1000000]
+  --p-hashed-feature-ids / --p-no-hashed-feature-ids
+                          If true, the feature ids in the resulting table
+                          will be presented as hashes of the sequences
+                          defining each feature. The hash will always be the
+                          same for the same sequence so this allows feature
+                          tables to be merged across runs of this method. You
+                          should only merge tables if the exact same
+                          parameters are used for each run.    [default: True]
+  --p-retain-all-samples / --p-no-retain-all-samples
+                          If True all samples input to dada2 will be retained
+                          in the output of dada2, if false samples with zero
+                          total frequency are removed from the table.
+                                                               [default: True]
+Outputs:
+  --o-table ARTIFACT FeatureTable[Frequency]
+                          The resulting feature table.              [required]
+  --o-representative-sequences ARTIFACT FeatureData[Sequence]
+                          The resulting feature sequences. Each feature in
+                          the feature table will be represented by exactly one
+                          sequence, and these sequences will be the joined
+                          paired-end sequences.                     [required]
+  --o-denoising-stats ARTIFACT SampleData[DADA2Stats]
+                                                                    [required]
+Miscellaneous:
+  --output-dir PATH       Output unspecified results to a directory
+  --verbose / --quiet     Display verbose output to stdout and/or stderr
+                          during execution of this action. Or silence output
+                          if execution is successful (silence is golden).
+  --example-data PATH     Write example data and exit.
+  --citations             Show citations and exit.
+  --use-cache DIRECTORY   Specify the cache to be used for the intermediate
+                          work of this action. If not provided, the default
+                          cache under $TMP/qiime2/<uname> will be used.
+                          IMPORTANT FOR HPC USERS: If you are on an HPC system
+                          and are using parallel execution it is important to
+                          set this to a location that is globally accessible
+                          to all nodes in the cluster.
+  --help                  Show this message and exit.
+
+Examples:
+  # ### example: denoise paired
+  qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs demux-paired.qza \
+    --p-trunc-len-f 150 \
+    --p-trunc-len-r 140 \
+    --o-representative-sequences representative-sequences.qza \
+    --o-table table.qza \
+    --o-denoising-stats denoising-stats.qza
+  
+
+                    There was a problem with the command:                     
+ (1/1?) No such option: ----
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs paired-end-demux.qza \
+  --p-trim-left-f 12 \
+  --p-trim-left-r 12 \
+  --p-trunc-len-f 240 \
+  --p-trunc-len-r 240 \
+  --p-n-threads 16 \
+  --o-table table.qza \
+  --o-representative-sequences rep-seqs.qza \
+  --o-denoising-stats denoising-stats.qza
+Usage: qiime dada2 denoise-paired [OPTIONS]
+
+  This method denoises paired-end sequences, dereplicates them, and filters
+  chimeras.
+
+Inputs:
+  --i-demultiplexed-seqs ARTIFACT SampleData[PairedEndSequencesWithQuality]
+                          The paired-end demultiplexed sequences to be
+                          denoised.                                 [required]
+Parameters:
+  --p-trunc-len-f INTEGER Position at which forward read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trunc-len-r INTEGER Position at which reverse read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trim-left-f INTEGER Position at which forward read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-trim-left-r INTEGER Position at which reverse read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-max-ee-f NUMBER     Forward reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-max-ee-r NUMBER     Reverse reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-trunc-q INTEGER     Reads are truncated at the first instance of a
+                          quality score less than or equal to this value. If
+                          the resulting read is then shorter than
+                          `trunc-len-f` or `trunc-len-r` (depending on the
+                          direction of the read) it is discarded. [default: 2]
+  --p-min-overlap INTEGER The minimum length of the overlap required for
+    Range(4, None)        merging the forward and reverse reads. [default: 12]
+  --p-pooling-method TEXT Choices('independent', 'pseudo')
+                          The method used to pool samples for denoising.
+                          "independent": Samples are denoised indpendently.
+                          "pseudo": The pseudo-pooling method is used to
+                          approximate pooling of samples. In short, samples
+                          are denoised independently once, ASVs detected in at
+                          least 2 samples are recorded, and samples are
+                          denoised independently a second time, but this time
+                          with prior knowledge of the recorded ASVs and thus
+                          higher sensitivity to those ASVs.
+                                                      [default: 'independent']
+  --p-chimera-method TEXT Choices('consensus', 'none', 'pooled')
+                          The method used to remove chimeras. "none": No
+                          chimera removal is performed. "pooled": All reads
+                          are pooled prior to chimera detection. "consensus":
+                          Chimeras are detected in samples individually, and
+                          sequences found chimeric in a sufficient fraction of
+                          samples are removed.          [default: 'consensus']
+  --p-min-fold-parent-over-abundance NUMBER
+                          The minimum abundance of potential parents of a
+                          sequence being tested as chimeric, expressed as a
+                          fold-change versus the abundance of the sequence
+                          being tested. Values should be greater than or equal
+                          to 1 (i.e. parents should be more abundant than the
+                          sequence being tested). This parameter has no effect
+                          if chimera-method is "none".          [default: 1.0]
+  --p-allow-one-off / --p-no-allow-one-off
+                          Bimeras that are one-off from exact are also
+                          identified if the `allow-one-off` argument is TrueIf
+                          True, a sequence will be identified as bimera if it
+                          is one mismatch or indel away from an exact bimera.
+                                                              [default: False]
+  --p-n-threads NTHREADS  The number of threads to use for multithreaded
+                          processing. If 0 is provided, all available cores
+                          will be used.                           [default: 1]
+  --p-n-reads-learn INTEGER
+                          The number of reads to use when training the error
+                          model. Smaller numbers will result in a shorter run
+                          time but a less reliable error model.
+                                                            [default: 1000000]
+  --p-hashed-feature-ids / --p-no-hashed-feature-ids
+                          If true, the feature ids in the resulting table
+                          will be presented as hashes of the sequences
+                          defining each feature. The hash will always be the
+                          same for the same sequence so this allows feature
+                          tables to be merged across runs of this method. You
+                          should only merge tables if the exact same
+                          parameters are used for each run.    [default: True]
+  --p-retain-all-samples / --p-no-retain-all-samples
+                          If True all samples input to dada2 will be retained
+                          in the output of dada2, if false samples with zero
+                          total frequency are removed from the table.
+                                                               [default: True]
+Outputs:
+  --o-table ARTIFACT FeatureTable[Frequency]
+                          The resulting feature table.              [required]
+  --o-representative-sequences ARTIFACT FeatureData[Sequence]
+                          The resulting feature sequences. Each feature in
+                          the feature table will be represented by exactly one
+                          sequence, and these sequences will be the joined
+                          paired-end sequences.                     [required]
+  --o-denoising-stats ARTIFACT SampleData[DADA2Stats]
+                                                                    [required]
+Miscellaneous:
+  --output-dir PATH       Output unspecified results to a directory
+  --verbose / --quiet     Display verbose output to stdout and/or stderr
+                          during execution of this action. Or silence output
+                          if execution is successful (silence is golden).
+  --example-data PATH     Write example data and exit.
+  --citations             Show citations and exit.
+  --use-cache DIRECTORY   Specify the cache to be used for the intermediate
+                          work of this action. If not provided, the default
+                          cache under $TMP/qiime2/<uname> will be used.
+                          IMPORTANT FOR HPC USERS: If you are on an HPC system
+                          and are using parallel execution it is important to
+                          set this to a location that is globally accessible
+                          to all nodes in the cluster.
+  --help                  Show this message and exit.
+
+Examples:
+  # ### example: denoise paired
+  qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs demux-paired.qza \
+    --p-trunc-len-f 150 \
+    --p-trunc-len-r 140 \
+    --o-representative-sequences representative-sequences.qza \
+    --o-table table.qza \
+    --o-denoising-stats denoising-stats.qza
+  
+
+                    There was a problem with the command:                     
+ (1/1) Invalid value for '--i-demultiplexed-seqs': paired-end-demux.qza does
+  not exist.
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ cd ..
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ ls
+data  rawdata
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ cd rawdata
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ ls
+paired-end-demux.qza            SRR17629913_pass_2_fastqc.zip
+paired-end-demux.qzv            SRR17629913_pass_2.fastq.gz
+pe-33manifest.txt               SRR17629914
+sample-metadata.tsv             SRR17629914_pass_1_fastqc.html
+SRA_Run_Table_PRJNA739563.txt   SRR17629914_pass_1_fastqc.zip
+SRR17629901                     SRR17629914_pass_1.fastq.gz
+SRR17629901_pass_1_fastqc.html  SRR17629914_pass_2_fastqc.html
+SRR17629901_pass_1_fastqc.zip   SRR17629914_pass_2_fastqc.zip
+SRR17629901_pass_1.fastq.gz     SRR17629914_pass_2.fastq.gz
+SRR17629901_pass_2_fastqc.html  SRR17629915
+SRR17629901_pass_2_fastqc.zip   SRR17629915_pass_1_fastqc.html
+SRR17629901_pass_2.fastq.gz     SRR17629915_pass_1_fastqc.zip
+SRR17629902                     SRR17629915_pass_1.fastq.gz
+SRR17629902_pass_1_fastqc.html  SRR17629915_pass_2_fastqc.html
+SRR17629902_pass_1_fastqc.zip   SRR17629915_pass_2_fastqc.zip
+SRR17629902_pass_1.fastq.gz     SRR17629915_pass_2.fastq.gz
+SRR17629902_pass_2_fastqc.html  SRR17629916
+SRR17629902_pass_2_fastqc.zip   SRR17629916_pass_1_fastqc.html
+SRR17629902_pass_2.fastq.gz     SRR17629916_pass_1_fastqc.zip
+SRR17629903                     SRR17629916_pass_1.fastq.gz
+SRR17629903_pass_1_fastqc.html  SRR17629916_pass_2_fastqc.html
+SRR17629903_pass_1_fastqc.zip   SRR17629916_pass_2_fastqc.zip
+SRR17629903_pass_1.fastq.gz     SRR17629916_pass_2.fastq.gz
+SRR17629903_pass_2_fastqc.html  SRR17629917
+SRR17629903_pass_2_fastqc.zip   SRR17629917_pass_1_fastqc.html
+SRR17629903_pass_2.fastq.gz     SRR17629917_pass_1_fastqc.zip
+SRR17629904                     SRR17629917_pass_1.fastq.gz
+SRR17629904_pass_1_fastqc.html  SRR17629917_pass_2_fastqc.html
+SRR17629904_pass_1_fastqc.zip   SRR17629917_pass_2_fastqc.zip
+SRR17629904_pass_1.fastq.gz     SRR17629917_pass_2.fastq.gz
+SRR17629904_pass_2_fastqc.html  SRR17629918
+SRR17629904_pass_2_fastqc.zip   SRR17629918_pass_1_fastqc.html
+SRR17629904_pass_2.fastq.gz     SRR17629918_pass_1_fastqc.zip
+SRR17629905                     SRR17629918_pass_1.fastq.gz
+SRR17629905_pass_1_fastqc.html  SRR17629918_pass_2_fastqc.html
+SRR17629905_pass_1_fastqc.zip   SRR17629918_pass_2_fastqc.zip
+SRR17629905_pass_1.fastq.gz     SRR17629918_pass_2.fastq.gz
+SRR17629905_pass_2_fastqc.html  SRR17629919
+SRR17629905_pass_2_fastqc.zip   SRR17629919_pass_1_fastqc.html
+SRR17629905_pass_2.fastq.gz     SRR17629919_pass_1_fastqc.zip
+SRR17629906                     SRR17629919_pass_1.fastq.gz
+SRR17629906_pass_1_fastqc.html  SRR17629919_pass_2_fastqc.html
+SRR17629906_pass_1_fastqc.zip   SRR17629919_pass_2_fastqc.zip
+SRR17629906_pass_1.fastq.gz     SRR17629919_pass_2.fastq.gz
+SRR17629906_pass_2_fastqc.html  SRR17629920
+SRR17629906_pass_2_fastqc.zip   SRR17629920_pass_1_fastqc.html
+SRR17629906_pass_2.fastq.gz     SRR17629920_pass_1_fastqc.zip
+SRR17629907                     SRR17629920_pass_1.fastq.gz
+SRR17629907_pass_1_fastqc.html  SRR17629920_pass_2_fastqc.html
+SRR17629907_pass_1_fastqc.zip   SRR17629920_pass_2_fastqc.zip
+SRR17629907_pass_1.fastq.gz     SRR17629920_pass_2.fastq.gz
+SRR17629907_pass_2_fastqc.html  SRR17629921
+SRR17629907_pass_2_fastqc.zip   SRR17629921_pass_1_fastqc.html
+SRR17629907_pass_2.fastq.gz     SRR17629921_pass_1_fastqc.zip
+SRR17629908                     SRR17629921_pass_1.fastq.gz
+SRR17629908_pass_1_fastqc.html  SRR17629921_pass_2_fastqc.html
+SRR17629908_pass_1_fastqc.zip   SRR17629921_pass_2_fastqc.zip
+SRR17629908_pass_1.fastq.gz     SRR17629921_pass_2.fastq.gz
+SRR17629908_pass_2_fastqc.html  SRR17629922
+SRR17629908_pass_2_fastqc.zip   SRR17629922_pass_1_fastqc.html
+SRR17629908_pass_2.fastq.gz     SRR17629922_pass_1_fastqc.zip
+SRR17629909                     SRR17629922_pass_1.fastq.gz
+SRR17629909_pass_1_fastqc.html  SRR17629922_pass_2_fastqc.html
+SRR17629909_pass_1_fastqc.zip   SRR17629922_pass_2_fastqc.zip
+SRR17629909_pass_1.fastq.gz     SRR17629922_pass_2.fastq.gz
+SRR17629909_pass_2_fastqc.html  SRR17629923
+SRR17629909_pass_2_fastqc.zip   SRR17629923_pass_1_fastqc.html
+SRR17629909_pass_2.fastq.gz     SRR17629923_pass_1_fastqc.zip
+SRR17629910                     SRR17629923_pass_1.fastq.gz
+SRR17629910_pass_1_fastqc.html  SRR17629923_pass_2_fastqc.html
+SRR17629910_pass_1_fastqc.zip   SRR17629923_pass_2_fastqc.zip
+SRR17629910_pass_1.fastq.gz     SRR17629923_pass_2.fastq.gz
+SRR17629910_pass_2_fastqc.html  SRR17629924
+SRR17629910_pass_2_fastqc.zip   SRR17629924_pass_1_fastqc.html
+SRR17629910_pass_2.fastq.gz     SRR17629924_pass_1_fastqc.zip
+SRR17629911                     SRR17629924_pass_1.fastq.gz
+SRR17629911_pass_1_fastqc.html  SRR17629924_pass_2_fastqc.html
+SRR17629911_pass_1_fastqc.zip   SRR17629924_pass_2_fastqc.zip
+SRR17629911_pass_1.fastq.gz     SRR17629924_pass_2.fastq.gz
+SRR17629911_pass_2_fastqc.html  SRR17629925
+SRR17629911_pass_2_fastqc.zip   SRR17629925_pass_1_fastqc.html
+SRR17629911_pass_2.fastq.gz     SRR17629925_pass_1_fastqc.zip
+SRR17629912                     SRR17629925_pass_1.fastq.gz
+SRR17629912_pass_1_fastqc.html  SRR17629925_pass_2_fastqc.html
+SRR17629912_pass_1_fastqc.zip   SRR17629925_pass_2_fastqc.zip
+SRR17629912_pass_1.fastq.gz     SRR17629925_pass_2.fastq.gz
+SRR17629912_pass_2_fastqc.html  SRR17629926
+SRR17629912_pass_2_fastqc.zip   SRR17629926_pass_1_fastqc.html
+SRR17629912_pass_2.fastq.gz     SRR17629926_pass_1_fastqc.zip
+SRR17629913                     SRR17629926_pass_1.fastq.gz
+SRR17629913_pass_1_fastqc.html  SRR17629926_pass_2_fastqc.html
+SRR17629913_pass_1_fastqc.zip   SRR17629926_pass_2_fastqc.zip
+SRR17629913_pass_1.fastq.gz     SRR17629926_pass_2.fastq.gz
+SRR17629913_pass_2_fastqc.html  SRR_Acc_List_PRJNA739563.txt
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ cd ..
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ mv raw_data/paired-end-demux.q* raw_data/pe-33manifest.txt raw_data/sample-metadata.tsv data/
+mv: cannot stat 'raw_data/paired-end-demux.q*': No such file or directory
+mv: cannot stat 'raw_data/pe-33manifest.txt': No such file or directory
+mv: cannot stat 'raw_data/sample-metadata.tsv': No such file or directory
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ cd rawdata
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ mv raw_data/paired-end-demux.q* raw_data/pe-33manifest.txt raw_data/sample-metadata.tsv data/
+mv: target 'data/': No such file or directory
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ mv paired-end-demux.qza paired-end-demux.qzv pe-33manifest.txt sample-metadata.tsv ../data/
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ ls
+SRA_Run_Table_PRJNA739563.txt   SRR17629914
+SRR17629901                     SRR17629914_pass_1_fastqc.html
+SRR17629901_pass_1_fastqc.html  SRR17629914_pass_1_fastqc.zip
+SRR17629901_pass_1_fastqc.zip   SRR17629914_pass_1.fastq.gz
+SRR17629901_pass_1.fastq.gz     SRR17629914_pass_2_fastqc.html
+SRR17629901_pass_2_fastqc.html  SRR17629914_pass_2_fastqc.zip
+SRR17629901_pass_2_fastqc.zip   SRR17629914_pass_2.fastq.gz
+SRR17629901_pass_2.fastq.gz     SRR17629915
+SRR17629902                     SRR17629915_pass_1_fastqc.html
+SRR17629902_pass_1_fastqc.html  SRR17629915_pass_1_fastqc.zip
+SRR17629902_pass_1_fastqc.zip   SRR17629915_pass_1.fastq.gz
+SRR17629902_pass_1.fastq.gz     SRR17629915_pass_2_fastqc.html
+SRR17629902_pass_2_fastqc.html  SRR17629915_pass_2_fastqc.zip
+SRR17629902_pass_2_fastqc.zip   SRR17629915_pass_2.fastq.gz
+SRR17629902_pass_2.fastq.gz     SRR17629916
+SRR17629903                     SRR17629916_pass_1_fastqc.html
+SRR17629903_pass_1_fastqc.html  SRR17629916_pass_1_fastqc.zip
+SRR17629903_pass_1_fastqc.zip   SRR17629916_pass_1.fastq.gz
+SRR17629903_pass_1.fastq.gz     SRR17629916_pass_2_fastqc.html
+SRR17629903_pass_2_fastqc.html  SRR17629916_pass_2_fastqc.zip
+SRR17629903_pass_2_fastqc.zip   SRR17629916_pass_2.fastq.gz
+SRR17629903_pass_2.fastq.gz     SRR17629917
+SRR17629904                     SRR17629917_pass_1_fastqc.html
+SRR17629904_pass_1_fastqc.html  SRR17629917_pass_1_fastqc.zip
+SRR17629904_pass_1_fastqc.zip   SRR17629917_pass_1.fastq.gz
+SRR17629904_pass_1.fastq.gz     SRR17629917_pass_2_fastqc.html
+SRR17629904_pass_2_fastqc.html  SRR17629917_pass_2_fastqc.zip
+SRR17629904_pass_2_fastqc.zip   SRR17629917_pass_2.fastq.gz
+SRR17629904_pass_2.fastq.gz     SRR17629918
+SRR17629905                     SRR17629918_pass_1_fastqc.html
+SRR17629905_pass_1_fastqc.html  SRR17629918_pass_1_fastqc.zip
+SRR17629905_pass_1_fastqc.zip   SRR17629918_pass_1.fastq.gz
+SRR17629905_pass_1.fastq.gz     SRR17629918_pass_2_fastqc.html
+SRR17629905_pass_2_fastqc.html  SRR17629918_pass_2_fastqc.zip
+SRR17629905_pass_2_fastqc.zip   SRR17629918_pass_2.fastq.gz
+SRR17629905_pass_2.fastq.gz     SRR17629919
+SRR17629906                     SRR17629919_pass_1_fastqc.html
+SRR17629906_pass_1_fastqc.html  SRR17629919_pass_1_fastqc.zip
+SRR17629906_pass_1_fastqc.zip   SRR17629919_pass_1.fastq.gz
+SRR17629906_pass_1.fastq.gz     SRR17629919_pass_2_fastqc.html
+SRR17629906_pass_2_fastqc.html  SRR17629919_pass_2_fastqc.zip
+SRR17629906_pass_2_fastqc.zip   SRR17629919_pass_2.fastq.gz
+SRR17629906_pass_2.fastq.gz     SRR17629920
+SRR17629907                     SRR17629920_pass_1_fastqc.html
+SRR17629907_pass_1_fastqc.html  SRR17629920_pass_1_fastqc.zip
+SRR17629907_pass_1_fastqc.zip   SRR17629920_pass_1.fastq.gz
+SRR17629907_pass_1.fastq.gz     SRR17629920_pass_2_fastqc.html
+SRR17629907_pass_2_fastqc.html  SRR17629920_pass_2_fastqc.zip
+SRR17629907_pass_2_fastqc.zip   SRR17629920_pass_2.fastq.gz
+SRR17629907_pass_2.fastq.gz     SRR17629921
+SRR17629908                     SRR17629921_pass_1_fastqc.html
+SRR17629908_pass_1_fastqc.html  SRR17629921_pass_1_fastqc.zip
+SRR17629908_pass_1_fastqc.zip   SRR17629921_pass_1.fastq.gz
+SRR17629908_pass_1.fastq.gz     SRR17629921_pass_2_fastqc.html
+SRR17629908_pass_2_fastqc.html  SRR17629921_pass_2_fastqc.zip
+SRR17629908_pass_2_fastqc.zip   SRR17629921_pass_2.fastq.gz
+SRR17629908_pass_2.fastq.gz     SRR17629922
+SRR17629909                     SRR17629922_pass_1_fastqc.html
+SRR17629909_pass_1_fastqc.html  SRR17629922_pass_1_fastqc.zip
+SRR17629909_pass_1_fastqc.zip   SRR17629922_pass_1.fastq.gz
+SRR17629909_pass_1.fastq.gz     SRR17629922_pass_2_fastqc.html
+SRR17629909_pass_2_fastqc.html  SRR17629922_pass_2_fastqc.zip
+SRR17629909_pass_2_fastqc.zip   SRR17629922_pass_2.fastq.gz
+SRR17629909_pass_2.fastq.gz     SRR17629923
+SRR17629910                     SRR17629923_pass_1_fastqc.html
+SRR17629910_pass_1_fastqc.html  SRR17629923_pass_1_fastqc.zip
+SRR17629910_pass_1_fastqc.zip   SRR17629923_pass_1.fastq.gz
+SRR17629910_pass_1.fastq.gz     SRR17629923_pass_2_fastqc.html
+SRR17629910_pass_2_fastqc.html  SRR17629923_pass_2_fastqc.zip
+SRR17629910_pass_2_fastqc.zip   SRR17629923_pass_2.fastq.gz
+SRR17629910_pass_2.fastq.gz     SRR17629924
+SRR17629911                     SRR17629924_pass_1_fastqc.html
+SRR17629911_pass_1_fastqc.html  SRR17629924_pass_1_fastqc.zip
+SRR17629911_pass_1_fastqc.zip   SRR17629924_pass_1.fastq.gz
+SRR17629911_pass_1.fastq.gz     SRR17629924_pass_2_fastqc.html
+SRR17629911_pass_2_fastqc.html  SRR17629924_pass_2_fastqc.zip
+SRR17629911_pass_2_fastqc.zip   SRR17629924_pass_2.fastq.gz
+SRR17629911_pass_2.fastq.gz     SRR17629925
+SRR17629912                     SRR17629925_pass_1_fastqc.html
+SRR17629912_pass_1_fastqc.html  SRR17629925_pass_1_fastqc.zip
+SRR17629912_pass_1_fastqc.zip   SRR17629925_pass_1.fastq.gz
+SRR17629912_pass_1.fastq.gz     SRR17629925_pass_2_fastqc.html
+SRR17629912_pass_2_fastqc.html  SRR17629925_pass_2_fastqc.zip
+SRR17629912_pass_2_fastqc.zip   SRR17629925_pass_2.fastq.gz
+SRR17629912_pass_2.fastq.gz     SRR17629926
+SRR17629913                     SRR17629926_pass_1_fastqc.html
+SRR17629913_pass_1_fastqc.html  SRR17629926_pass_1_fastqc.zip
+SRR17629913_pass_1_fastqc.zip   SRR17629926_pass_1.fastq.gz
+SRR17629913_pass_1.fastq.gz     SRR17629926_pass_2_fastqc.html
+SRR17629913_pass_2_fastqc.html  SRR17629926_pass_2_fastqc.zip
+SRR17629913_pass_2_fastqc.zip   SRR17629926_pass_2.fastq.gz
+SRR17629913_pass_2.fastq.gz     SRR_Acc_List_PRJNA739563.txt
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/rawdata$ cd ..
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ cd data
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+paired-end-demux.qza  paired-end-demux.qzv  pe-33manifest.txt  sample-metadata.tsv  this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired \
+   --i-demultiplexed-seqs paired-end-demux.qza \
+   --p-trim-left-f 12 \
+   --p-trim-left-r 12\
+   --p-trunc-len-f 240 \
+   --p-trunc-len-r 240 \
+   --o-table table.qza \
+   --p-n-threads 16 \ # ----> this is the number of cores we will use we might need to modify that
+   --o-representative-sequences rep-seqs.qza \
+   --o-denoising-stats denoising-stats.qza \
+   --verbose\
+Usage: qiime dada2 denoise-paired [OPTIONS]
+
+  This method denoises paired-end sequences, dereplicates them, and filters
+  chimeras.
+
+Inputs:
+  --i-demultiplexed-seqs ARTIFACT SampleData[PairedEndSequencesWithQuality]
+                          The paired-end demultiplexed sequences to be
+                          denoised.                                 [required]
+Parameters:
+  --p-trunc-len-f INTEGER Position at which forward read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trunc-len-r INTEGER Position at which reverse read sequences should be
+                          truncated due to decrease in quality. This truncates
+                          the 3' end of the of the input sequences, which will
+                          be the bases that were sequenced in the last cycles.
+                          Reads that are shorter than this value will be
+                          discarded. After this parameter is applied there
+                          must still be at least a 12 nucleotide overlap
+                          between the forward and reverse reads. If 0 is
+                          provided, no truncation or length filtering will be
+                          performed                                 [required]
+  --p-trim-left-f INTEGER Position at which forward read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-trim-left-r INTEGER Position at which reverse read sequences should be
+                          trimmed due to low quality. This trims the 5' end of
+                          the input sequences, which will be the bases that
+                          were sequenced in the first cycles.     [default: 0]
+  --p-max-ee-f NUMBER     Forward reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-max-ee-r NUMBER     Reverse reads with number of expected errors higher
+                          than this value will be discarded.    [default: 2.0]
+  --p-trunc-q INTEGER     Reads are truncated at the first instance of a
+                          quality score less than or equal to this value. If
+                          the resulting read is then shorter than
+                          `trunc-len-f` or `trunc-len-r` (depending on the
+                          direction of the read) it is discarded. [default: 2]
+  --p-min-overlap INTEGER The minimum length of the overlap required for
+    Range(4, None)        merging the forward and reverse reads. [default: 12]
+  --p-pooling-method TEXT Choices('independent', 'pseudo')
+                          The method used to pool samples for denoising.
+                          "independent": Samples are denoised indpendently.
+                          "pseudo": The pseudo-pooling method is used to
+                          approximate pooling of samples. In short, samples
+                          are denoised independently once, ASVs detected in at
+                          least 2 samples are recorded, and samples are
+                          denoised independently a second time, but this time
+                          with prior knowledge of the recorded ASVs and thus
+                          higher sensitivity to those ASVs.
+                                                      [default: 'independent']
+  --p-chimera-method TEXT Choices('consensus', 'none', 'pooled')
+                          The method used to remove chimeras. "none": No
+                          chimera removal is performed. "pooled": All reads
+                          are pooled prior to chimera detection. "consensus":
+                          Chimeras are detected in samples individually, and
+                          sequences found chimeric in a sufficient fraction of
+                          samples are removed.          [default: 'consensus']
+  --p-min-fold-parent-over-abundance NUMBER
+                          The minimum abundance of potential parents of a
+                          sequence being tested as chimeric, expressed as a
+                          fold-change versus the abundance of the sequence
+                          being tested. Values should be greater than or equal
+                          to 1 (i.e. parents should be more abundant than the
+                          sequence being tested). This parameter has no effect
+                          if chimera-method is "none".          [default: 1.0]
+  --p-allow-one-off / --p-no-allow-one-off
+                          Bimeras that are one-off from exact are also
+                          identified if the `allow-one-off` argument is TrueIf
+                          True, a sequence will be identified as bimera if it
+                          is one mismatch or indel away from an exact bimera.
+                                                              [default: False]
+  --p-n-threads NTHREADS  The number of threads to use for multithreaded
+                          processing. If 0 is provided, all available cores
+                          will be used.                           [default: 1]
+  --p-n-reads-learn INTEGER
+                          The number of reads to use when training the error
+                          model. Smaller numbers will result in a shorter run
+                          time but a less reliable error model.
+                                                            [default: 1000000]
+  --p-hashed-feature-ids / --p-no-hashed-feature-ids
+                          If true, the feature ids in the resulting table
+                          will be presented as hashes of the sequences
+                          defining each feature. The hash will always be the
+                          same for the same sequence so this allows feature
+                          tables to be merged across runs of this method. You
+                          should only merge tables if the exact same
+                          parameters are used for each run.    [default: True]
+  --p-retain-all-samples / --p-no-retain-all-samples
+                          If True all samples input to dada2 will be retained
+                          in the output of dada2, if false samples with zero
+                          total frequency are removed from the table.
+                                                               [default: True]
+Outputs:
+  --o-table ARTIFACT FeatureTable[Frequency]
+                          The resulting feature table.              [required]
+  --o-representative-sequences ARTIFACT FeatureData[Sequence]
+                          The resulting feature sequences. Each feature in
+                          the feature table will be represented by exactly one
+                          sequence, and these sequences will be the joined
+                          paired-end sequences.                     [required]
+  --o-denoising-stats ARTIFACT SampleData[DADA2Stats]
+                                                                    [required]
+Miscellaneous:
+  --output-dir PATH       Output unspecified results to a directory
+  --verbose / --quiet     Display verbose output to stdout and/or stderr
+                          during execution of this action. Or silence output
+                          if execution is successful (silence is golden).
+  --example-data PATH     Write example data and exit.
+  --citations             Show citations and exit.
+  --use-cache DIRECTORY   Specify the cache to be used for the intermediate
+                          work of this action. If not provided, the default
+                          cache under $TMP/qiime2/<uname> will be used.
+                          IMPORTANT FOR HPC USERS: If you are on an HPC system
+                          and are using parallel execution it is important to
+                          set this to a location that is globally accessible
+                          to all nodes in the cluster.
+  --help                  Show this message and exit.
+
+Examples:
+  # ### example: denoise paired
+  qiime dada2 denoise-paired \
+    --i-demultiplexed-seqs demux-paired.qza \
+    --p-trunc-len-f 150 \
+    --p-trunc-len-r 140 \
+    --o-representative-sequences representative-sequences.qza \
+    --o-table table.qza \
+    --o-denoising-stats denoising-stats.qza
+  
+
+                    There was a problem with the command:                     
+ (1/1?) No such option: ----
+-bash: --o-representative-sequences: command not found
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired \
+  --i-demultiplexed-seqs paired-end-demux.qza \
+  --p-trim-left-f 12 \
+  --p-trim-left-r 12 \
+  --p-trunc-len-f 240 \
+  --p-trunc-len-r 240 \
+  --p-n-threads 16 \
+  --o-table table.qza \
+  --o-representative-sequences rep-seqs.qza \
+  --o-denoising-stats denoising-stats.qza \
+  --verbose
+Running external command line application(s). This may print messages to stdout and/or stderr.
+The command(s) being run are below. These commands cannot be manually re-run as they will depend on temporary files that no longer exist.
+
+Command: run_dada.R --input_directory /tmp/tmpexvbsmyh/forward --input_directory_reverse /tmp/tmpexvbsmyh/reverse --output_path /tmp/tmpexvbsmyh/output.tsv.biom --output_track /tmp/tmpexvbsmyh/track.tsv --filtered_directory /tmp/tmpexvbsmyh/filt_f --filtered_directory_reverse /tmp/tmpexvbsmyh/filt_r --truncation_length 240 --truncation_length_reverse 240 --trim_left 12 --trim_left_reverse 12 --max_expected_errors 2.0 --max_expected_errors_reverse 2.0 --truncation_quality_score 2 --min_overlap 12 --pooling_method independent --chimera_method consensus --min_parental_fold 1.0 --allow_one_off False --num_threads 16 --learn_min_reads 1000000
+
+R version 4.3.3 (2024-02-29) 
+Loading required package: Rcpp
+DADA2: 1.30.0 / Rcpp: 1.0.13.1 / RcppParallel: 5.1.9 
+2) Filtering ..........................
+3) Learning Error Rates
+232969260 total bases in 1021795 reads from 21 samples will be used for learning the error rates.
+232969260 total bases in 1021795 reads from 21 samples will be used for learning the error rates.
+3) Denoise samples ..........................
+..........................
+5) Remove chimeras (method = consensus)
+6) Report read numbers through the pipeline
+7) Write output
+Saved FeatureTable[Frequency] to: table.qza
+Saved FeatureData[Sequence] to: rep-seqs.qza
+Saved SampleData[DADA2Stats] to: denoising-stats.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime dada2 denoise-paired  --i-demultiplexed-seqs paired-end-demux.qza  --p-trim-left-f 12  --p-trim-left-r 12 --p-trunc-len-f 240  --p-trunc-len-r 240  --o-table table.qza  --p-n-threads 16 --o-representative-sequences rep-seqs.qza   --o-denoising-stats denoising-stats.qza --verbose
+
+Running external command line application(s). This may print messages to stdout and/or stderr.
+The command(s) being run are below. These commands cannot be manually re-run as they will depend on temporary files that no longer exist.
+
+Command: run_dada.R --input_directory /tmp/tmp4gocf3_2/forward --input_directory_reverse /tmp/tmp4gocf3_2/reverse --output_path /tmp/tmp4gocf3_2/output.tsv.biom --output_track /tmp/tmp4gocf3_2/track.tsv --filtered_directory /tmp/tmp4gocf3_2/filt_f --filtered_directory_reverse /tmp/tmp4gocf3_2/filt_r --truncation_length 240 --truncation_length_reverse 240 --trim_left 12 --trim_left_reverse 12 --max_expected_errors 2.0 --max_expected_errors_reverse 2.0 --truncation_quality_score 2 --min_overlap 12 --pooling_method independent --chimera_method consensus --min_parental_fold 1.0 --allow_one_off False --num_threads 16 --learn_min_reads 1000000
+
+R version 4.3.3 (2024-02-29) 
+Loading required package: Rcpp
+DADA2: 1.30.0 / Rcpp: 1.0.13.1 / RcppParallel: 5.1.9 
+2) Filtering ^Z
+[1]+  Stopped                 qiime dada2 denoise-paired --i-demultiplexed-seqs paired-end-demux.qza --p-trim-left-f 12 --p-trim-left-r 12 --p-trunc-len-f 240 --p-trunc-len-r 240 --o-table table.qza --p-n-threads 16 --o-representative-sequences rep-seqs.qza --o-denoising-stats denoising-stats.qza --verbose
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime feature-table summarize  \ 
+   --i-table table.qza \
+   --o-visualization table.qzv \
+   --m-sample-metadata-file sample-metadata.tsv
+Saved Visualization to: table.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime feature-table tabulate-seqs \
+   --i-data rep-seqs.qza  \
+   --o-visualization rep-seqs.qzv
+Saved Visualization to: rep-seqs.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime metadata tabulate   \
+   --m-input-file denoising-stats.qza  \
+   --o-visualization denoising-stats.qzv
+Saved Visualization to: denoising-stats.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+denoising-stats.qza   paired-end-demux.qzv  rep-seqs.qzv         table.qzv
+denoising-stats.qzv   pe-33manifest.txt     sample-metadata.tsv  this
+paired-end-demux.qza  rep-seqs.qza          table.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ head this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ rm this
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+denoising-stats.qza   paired-end-demux.qzv  rep-seqs.qzv         table.qzv
+denoising-stats.qzv   pe-33manifest.txt     sample-metadata.tsv
+paired-end-demux.qza  rep-seqs.qza          table.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ 
