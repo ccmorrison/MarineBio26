@@ -1,0 +1,98 @@
+Last login: Sat Feb 21 18:51:58 on ttys000
+
+The default interactive shell is now zsh.
+To update your account to use zsh, please run `chsh -s /bin/zsh`.
+For more details, please visit https://support.apple.com/kb/HT208050.
+(base) Caitlins-MacBook-Pro-9:~ ccmorrison$ ssh ccm6056@oedipus.bioinformatics.rit.edu
+RIT information technology resources are for the use of the RIT community only.
+By using RIT information technology resources you acknowledge that you have read
+and comply with RIT's Code of Conduct for Computer and Network Use and RIT's
+Information Security Policy and Standards. Use of RIT information technology
+resources may be monitored and unauthorized use is strictly prohibited.
+ccm6056@oedipus.bioinformatics.rit.edu's password: 
+Linux oedipus 6.12.69+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.69-1 (2026-02-08) x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+Last login: Sat Feb 21 18:52:42 2026 from 10.118.24.176
+ccm6056@oedipus:~$ conda activate qiime2-amplicon-2024.10
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~$ cd turtle
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle$ cd data
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+ASV-table
+ASV-table-no-mitochondria-no-chloroplast
+denoising-stats.qza
+denoising-stats.qzv
+paired-end-demux.qza
+paired-end-demux.qzv
+pe-33manifest.txt
+rep-seqs.qza
+rep-seqs.qzv
+sample-metadata.tsv
+silva-138-99-nb-classifier.qza
+table-no-mitochondria-no-chloroplast.qza
+table-no-mitochondria-no-chloroplast.qzv
+table.qza
+table.qzv
+taxa-bar-plots-no-mitochondria-no-chloroplast.qzv
+taxa-bar-plots.qzv
+taxonomy.qza
+taxonomy.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha-rarefaction   --i-table table-no-mitochondria-no-chloroplast.qza --p-max-depth 65000  --m-metadata-file sample-metadata.tsv  --o-visualization alpha-rarefaction.qzv
+Saved Visualization to: alpha-rarefaction.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha-rarefaction   --i-table table-no-mitochondria-no-chloroplast.qza --p-max-depth 8000  --m-metadata-file sample-metadata.tsv  --o-visualization alpha-rarefaction-2.qzv
+Saved Visualization to: alpha-rarefaction-2.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ ls
+alpha-rarefaction-2.qzv
+alpha-rarefaction.qzv
+ASV-table
+ASV-table-no-mitochondria-no-chloroplast
+denoising-stats.qza
+denoising-stats.qzv
+paired-end-demux.qza
+paired-end-demux.qzv
+pe-33manifest.txt
+rep-seqs.qza
+rep-seqs.qzv
+sample-metadata.tsv
+silva-138-99-nb-classifier.qza
+table-no-mitochondria-no-chloroplast.qza
+table-no-mitochondria-no-chloroplast.qzv
+table.qza
+table.qzv
+taxa-bar-plots-no-mitochondria-no-chloroplast.qzv
+taxa-bar-plots.qzv
+taxonomy.qza
+taxonomy.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ 
+qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ head sample-metadata.tsv 
+SampleID	Assay Type	BioProject	Collection_Date	geo_loc_name	isolation_source	lat_lon	Library Name
+categorical	categorical	categorical	categorical	categorical	categoricacategorical	categorical
+SRR17629901	AMPLICON	PRJNA739563	5/1/18	Italy:Tyrrhenian Sea	Stomach of a pipping turtle L1_1	35.863277 N 12.854687 E	21380272
+SRR17629902	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Integer eggshell N2_4	40.504083 N 14.929983 E	21380271
+SRR17629903	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Integer eggshell N2_3	40.504083 N 14.929983 E	21380270
+SRR17629904	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Integer eggshell N1_2	40.126240 N 15.180160 E	21380269
+SRR17629905	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Integer eggshell N1_1	40.126240 N 15.180160 E	21380268
+SRR17629906	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Integer eggshell L2_3	35.863277 N 12.854687 E	21380267
+SRR17629907	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Eggshell fragments L2_2	35.863277 N 12.854687 E	21380266
+SRR17629908	AMPLICON	PRJNA739563	5/1/19	Italy:Tyrrhenian Sea	Sand N2_4	40.504083 N 14.929983 E	21380288
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ cp table-no-mitochondria-no-chloroplast.qza table-filtered-no-mitochondria-no-chloroplast.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime taxa barplot   \
+ --i-table table-filtered-no-mitochondria-no-chloroplast.qza  \
+ --i-taxonomy taxonomy.qza   \
+ --m-metadata-file sample-metadata.tsv  \
+ --o-visualization taxa-bar-plots-filtered-no-mitochondria-no-chloroplast.qzv
+Saved Visualization to: taxa-bar-plots-filtered-no-mitochondria-no-chloroplast.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime tools export   --input-path table-filtered-no-mitochondria-no-chloroplast.qza  --output-path ASV-table-filtered-no-mitochondria-no-chloroplast
+Exported table-filtered-no-mitochondria-no-chloroplast.qza as BIOMV210DirFmt to directory ASV-table-filtered-no-mitochondria-no-chloroplast
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ biom convert -i ASV-table-filtered-no-mitochondria-no-chloroplast/feature-table.biom -o ASV-table-filtered-no-mitochondria-no-chloroplast/feature-table.tsv --to-tsv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime taxa collapse  --i-table table-filtered-no-mitochondria-no-chloroplast.qza --i-taxonomy taxonomy.qza   --o-collapsed-table table-collapsed-filtered-no-mitochondria-no-chloroplast-level7.qza --p-level 7
+Saved FeatureTable[Frequency] to: table-collapsed-filtered-no-mitochondria-no-chloroplast-level7.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime tools export   --input-path table-collapsed-filtered-no-mitochondria-no-chloroplast-level7.qza  --output-path table-collapsed-filtered-no-mitochondria-no-chloroplast-level7
+Exported table-collapsed-filtered-no-mitochondria-no-chloroplast-level7.qza as BIOMV210DirFmt to directory table-collapsed-filtered-no-mitochondria-no-chloroplast-level7
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ biom convert -i table-collapsed-filtered-no-mitochondria-no-chloroplast-level7/feature-table.biom -o table-collapsed-filtered-no-mitochondria-no-chloroplast-level7/feature-table.tsv --to-tsv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ 
