@@ -1,0 +1,19 @@
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha \
+   --i-table  table-filtered-no-mitochondria-no-chloroplast.qza \
+   --p-metric shannon \
+   --o-alpha-diversity ALPHA-shannon-vector.qza 
+Saved SampleData[AlphaDiversity] to: ALPHA-shannon-vector.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha-group-significance \
+   --i-alpha-diversity ALPHA-shannon-vector.qza \
+   --m-metadata-file sample-metadata.tsv \
+   --o-visualization ALPHA-shannon-group-significance.qzv
+Saved Visualization to: ALPHA-shannon-group-significance.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha    --i-table  table-filtered-no-mitochondria-no-chloroplast.qza    --p-metric simpson    --o-alpha-diversity ALPHA-simpson-vector.qza 
+Saved SampleData[AlphaDiversity] to: ALPHA-simpson-vector.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha-group-significance    --i-alpha-diversity ALPHA-simpson-vector.qza    --m-metadata-file sample-metadata.tsv    --o-visualization ALPHA-simpson-group-significance.qzv
+Saved Visualization to: ALPHA-simpson-group-significance.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha    --i-table  table-filtered-no-mitochondria-no-chloroplast.qza    --p-metric chao1    --o-alpha-diversity ALPHA-chao1-vector.qza 
+Saved SampleData[AlphaDiversity] to: ALPHA-chao1-vector.qza
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha-group-significance    --i-alpha-diversity ALPHA-chao1-vector.qza    --m-metadata-file sample-metadata.tsv    --o-visualization ALPHA-chao1-group-significance.qzv
+Saved Visualization to: ALPHA-chao1-group-significance.qzv
+(qiime2-amplicon-2024.10) ccm6056@oedipus:~/turtle/data$ qiime diversity alpha    --i-table  table-filtered-no-mitochondria-no-chloroplast.qza    --p-metric faith_pd    --o-alpha-diversity ALPHA-faith_pd-vector.qza 
